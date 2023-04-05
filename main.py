@@ -2,11 +2,16 @@ import os
 import requests
 import discord
 from discord.ext import tasks
+from dotenv import load_dotenv
 
-client = discord.Client()
+load_dotenv()  # Load variables from .env file
+intents = discord.Intents.default()
+intents.members = True
+
+client = discord.Client(intents=intents)
 
 # Replace with your own Riot Games API key
-RIOT_API_KEY = os.environ['RIOT_API_KEY']
+RIOT_API_KEY = os.environ["RIOT_API_KEY"]
 # Replace with your own Discord API key
 DISCORD_API_KEY = os.environ['DISCORD_API_KEY']
 
@@ -15,7 +20,7 @@ summoner_name = "Wraithlander"
 region = "euw1"
 
 # The ID of the channel to post updates in
-channel_id = 1234567890
+channel_id = 608728671775096843
 
 @tasks.loop(minutes=1)
 async def track_ranked_games():
