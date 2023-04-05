@@ -10,13 +10,11 @@ intents.members = True
 
 client = discord.Client(intents=intents)
 
-# Replace with your own Riot Games API key
 RIOT_API_KEY = os.environ["RIOT_API_KEY"]
-# Replace with your own Discord API key
 DISCORD_API_KEY = os.environ['DISCORD_API_KEY']
 
 # The summoner name and region to track
-summoner_name = "Wraithlander"
+summoner_name = "Chénny"
 region = "euw1"
 
 # The ID of the channel to post updates in
@@ -28,11 +26,13 @@ async def track_ranked_games():
         # Get summoner data
         summoner_url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
         summoner_data = requests.get(summoner_url, headers={"X-Riot-Token": RIOT_API_KEY}).json()
+        print(summoner_data)
         summoner_id = summoner_data['id']
 
         # Get match history
         match_history_url = f"https://{region}.api.riotgames.com/lol/match/v4/matchlists/by-account/{summoner_id}?queue=420"
         match_history_data = requests.get(match_history_url, headers={"X-Riot-Token": RIOT_API_KEY}).json()
+        print(match_history_data)
         match_id = match_history_data['matches'][0]['gameId']
 
         # Get match data
@@ -45,7 +45,7 @@ async def track_ranked_games():
                 break
         stats = match_data['participants'][participant_id - 1]['stats']
         result = "Victory" if stats['win'] else "Defeat"
-        lp_gain = stats['win'] * (int(match_data['gameDuration']) // 60 + 3)
+        lp_gain = stats['win'] * stats['leaguePoints'] - (1 - stats['win']) * stats['leaguePoints']
 
         # Get champion data
         champion_url = f"https://{region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/{summoner_id}"
